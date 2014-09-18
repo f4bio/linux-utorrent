@@ -10,7 +10,7 @@ if [ "$1" = "start" ]; then
 		-daemon
 elif [ "$1" = "stop" ]; then
 	PID=$(cat "$UTSERVER_BASEDIR/utserver.pid")
-	echo "$PID"
+	sudo kill "$PID"
 else
 	echo "usage 'utorrent-server [start|stop]'"
 fi
