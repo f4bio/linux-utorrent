@@ -3,19 +3,23 @@
 if [ ! -e "$(command -v utserver)" ]; then echo "'utserver' not installed (correctly)..." && exit 1; fi
 
 UTSERVER_BASEDIR="$(dirname $(readlink $(command -v utserver)))"
+UTSERVER_CONFIGFILE="$UTSERVER_BASEDIR/settings.dat"
+UTSERVER_LOGFILE="$UTSERVER_BASEDIR/logs/utserver.log"
+UTSERVER_PIDFILE="$UTSERVER_BASEDIR/utserver.pid"
 
 if [ "$1" = "start" ]; then
 	sudo utserver -settingspath "$UTSERVER_BASEDIR" \
-		-configfile "$UTSERVER_BASEDIR/settings.dat" \
-		-logfile "$UTSERVER_BASEDIR/logs/utserver.log" \
-		-pidfile "$UTSERVER_BASEDIR/utserver.pid" \
+		-configfile "$UTSERVER_CONFIGFILE" \
+		-logfile "$UTSERVER_LOGFILE" \
+		-pidfile "$UTSERVER_PIDFILE" \
 		-daemon
 elif [ "$1" = "stop" ]; then
-	PID=$(cat "$UTSERVER_BASEDIR/utserver.pid")
+	PID=$(cat "$UTSERVER_PIDFILE")
 	sudo kill "$PID"
+	sudo rm "$UTSERVER_PIDFILE"
 elif [ "$1" = "status" ]; then
-	if [ -f "$UTSERVER_BASEDIR/utserver.pid" ]; then
-		PID=$(cat "$UTSERVER_BASEDIR/utserver.pid")
+	if [ -f "$UTSERVER_PIDFILE" ]; then
+		PID=$(cat "$UTSERVER_PIDFILE")
 		echo "'utorrent-server' is running (pid=$PID)"
 	else
 		echo "'utorrent-server' is not running"
