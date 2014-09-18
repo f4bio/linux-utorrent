@@ -1,0 +1,8 @@
+#!/bin/bash
+
+export UTSERVER_BASEDIR=/opt/utorrent-server
+WORKING_DIR="$(mktemp -d)"
+DL_URL="http://...."
+
+curl "$DL_URL" -o "$WORKING_DIR"
+tar xzf "$WORKING_DIR"/....
