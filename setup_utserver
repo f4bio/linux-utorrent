@@ -12,6 +12,8 @@ SYSTEM_DISTRO="$(cat /etc/*-release | grep '^ID=' | cut -d'=' -f 2)"
 SYSTEM_ARCH="$(uname -m)"
 DL_URL="http://download-new.utorrent.com/endpoint/utserver/os"
 
+sudo mkdir -p "$BASEDIR"
+
 read -p "is are all required packages setup correctly? (e.g. 'libssl') [Y/n] " yn
 if [[ $yn = "n" ]]; then
 	exit 0
