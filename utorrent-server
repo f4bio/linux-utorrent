@@ -25,5 +25,5 @@ elif [ "$1" = "status" ]; then
 		echo "'utorrent-server' is not running"
 	fi
 else
-	echo "usage 'utorrent-server [start|stop]'"
+	echo "usage 'utorrent-server [start|stop|status]'"
 fi
