@@ -1,7 +1,0 @@
-#!/bin/bash
-
-if [ ! "$UTSERVER_BASEDIR" ]; then
-	echo "please run 'setup_utserver' first"
-fi
-
-sudo utserver -settingspath "$UTSERVER_BASEDIR" -configfile "$UTSERVER_BASEDIR/settings.dat" -logfile "$UTSERVER_BASEDIR/logs/utserver.log" -pidfile "$UTSERVER_BASEDIR/utserver.pid" -daemon

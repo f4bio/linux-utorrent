@@ -1,8 +1,0 @@
-#!/bin/bash
-
-if [ ! "$UTSERVER_BASEDIR" ]; then
-	echo "please run 'setup_utserver' first"
-fi
-PID=$(cat "$UTSERVER_BASEDIR/utserver.pid")
-
-echo "$PID"

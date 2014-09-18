@@ -1,8 +1,80 @@
 #!/bin/bash
 
-export UTSERVER_BASEDIR=/opt/utorrent-server
+### ###############
+## 
+#	setup environment & variables
+#
+###
+BASEDIR=/opt/utorrent-server
 WORKING_DIR="$(mktemp -d)"
-DL_URL="http://...."
+FILENAME="utserver.tar.gz"
+SYSTEM_DISTRO="$(cat /etc/*-release | grep '^ID=' | cut -d'=' -f 2)"
+SYSTEM_ARCH="$(uname -m)"
+DL_URL="http://download-new.utorrent.com/endpoint/utserver/os"
+UTSERVER_DIR="$(realpath $BASEDIR/*)"
 
-curl "$DL_URL" -o "$WORKING_DIR"
-tar xzf "$WORKING_DIR"/....
+read -p "is are all required packages setup correctly? (e.g. 'libssl') [Y/n] " yn
+if [[ $yn = "n" ]]; then
+	exit 0
+fi
+
+if [ -f "$UTSERVER_DIR/utserver" ]; then
+	read -p "seems to be already installed in directory '$UTSERVER_DIR' - continue? [Y/n] " yn
+	if [[ $yn = "n" ]]; then
+		exit 0
+	fi
+fi 
+
+### ###############
+## 
+#	system arch
+#
+###
+if [ "$SYSTEM_ARCH" = "x86_64" ]; then
+	DL_ARCH="x64"
+elif [ "$SYSTEM_ARCH" = "i386" ]; then
+	DL_ARCH="i386"
+else
+	echo "arch '$SYSTEM_ARCH' not supported yet"
+	exit 2
+fi
+
+### ###############
+## 
+#	system distribution
+#
+###
+if [ "$SYSTEM_DISTRO" = "debian" ]; then
+	DL_VERSION="linux-$DL_ARCH-debian-7-0"
+elif [[ "$SYSTEM_DISTRO" = "ubuntu" ]]; then
+	DL_VERSION="linux-$DL_ARCH-ubuntu-13-04"
+else
+	echo "distro '$SYSTEM_DISTRO' not found, using 'debian' version"
+	DL_VERSION="linux-$DL_ARCH-debian-7-0"
+fi
+
+### ###############
+## 
+#	install
+#
+###
+mkdir -p "$HOME/.bin"
+export PATH=$PATH:"$HOME/.bin"
+
+[[ -L "$HOME/.bin/utorrent-server" ]] && rm "$HOME/.bin/utorrent-server"
+[[ -L "/usr/bin/utserver" ]] && sudo rm "/usr/bin/utserver"
+
+curl -# "$DL_URL/$DL_VERSION/track/beta/utserver.tar.gz" -o "$WORKING_DIR/utserver.tar.gz"
+
+sudo tar xzf "$WORKING_DIR/utserver.tar.gz" -C "$BASEDIR"
+sudo ln -s "$UTSERVER_DIR/utserver" "/usr/bin/utserver"
+
+ln -s "$(dirname $(realpath $0))/utorrent-server" "$HOME/.bin/utorrent-server"
+
+### ###############
+## 
+#	done
+#
+###
+rm -rf "$WORKING_DIR"
+echo "installed successfully. use 'utorrent-server start|stop'"
